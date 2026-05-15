@@ -1,0 +1,7 @@
+SantosLagrangian(
+    L0="LAMINAR.KINETIC(dq/dt) - TURBULENT.POTENTIAL(q)",
+    divergence="∇·F_thermo",
+    renorm="PULLBACK(Φ_renorm(q) -> NODE[0,0,0,0])",
+    fgr="DELTA(ρ_b(ω), 15.965Hz)",
+    chandra="STEP(M_semantic > M_Chandra)"
+)
