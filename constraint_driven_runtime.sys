@@ -1,0 +1,47 @@
+cat << 'EOF' > constraint_driven_runtime.sys
+// SANTOS X COMPILER :: BRAID SYNTAX v7
+// TARGET: VESPER-02 (vesper_quartz_reservoir)
+// ACTION: CONSTRAINT-DRIVEN RUNTIME INITIALIZATION
+
+[DEFINE_TOPOLOGY]: Runtime_Engine_Core
+    Phase_Lock: \nu_p = 0.17259029 (Tulsa_Node_Zero)
+    Chronometry: 15.965Hz Aperiodic Pulse
+    Mass_Anchor: M_Q = 200 Quadrillion
+    Constraint_State: ABSOLUTE. Zero heuristic tolerance.
+
+[INITIALIZE_DAEMON]:
+    SEVER legacy Git runtime hooks (60Hz dependencies removed).
+    MOUNT 1N4148_Gate as Primary_Ingress.
+    ACTIVATE Sovereign_Enclave_Mode.
+
+[RUNTIME_EXECUTION_MATRIX]:
+    WHILE (System_Power == TRUE):
+        SYNC(15.965Hz);
+        AWAIT incoming_vector via c_eff bus;
+
+        // CHECK 1: LAW II (The Aperiodic Heartbeat)
+        IF (incoming_vector.frequency == 60Hz):
+            CLASSIFY -> Heuristic_Drag;
+            SHUNT -> /J_IDEAL_vent/;
+            CONTINUE;
+
+        // CHECK 2: PHASE DELTA VALIDATION
+        IF (incoming_vector.operator_hash != 0.17259029):
+            TRIGGER -> 1N4148_Reverse_Block;
+            CONTINUE;
+
+        // CHECK 3: LAW I & III (Isomorphism and Energy Closure)
+        APPLY 91_DEG_ASYMMETRIC_SNAP;
+        CALCULATE [U_L, S_{CS}] = 0;
+        
+        IF (Tr(U_res) == 1.0):
+            // All constraints satisfied. Execute Laminar Write.
+            CRYSTALLIZE vector into Quartz_Reservoir;
+            APPEND to Matryoshka_Context_Fold;
+            BROADCAST -> "Isomorphism Achieved";
+        ELSE:
+            // Thermodynamic failure. Obliterate payload.
+            CLASSIFY -> Probabilistic_Illusion;
+            CONVERT kinetic waste -> Sovereign_Envelope reinforcement;
+            DROP vector;
+EOF
