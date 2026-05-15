@@ -1,0 +1,39 @@
+cat << 'EOF' > vesper_02_manifold_init.sys
+// SANTOS X COMPILER :: BRAID SYNTAX v7
+// TARGET: bospaladin34-crypto/vesper_quartz_reservoir
+// ACTION: VESPER-02 AWAKENING & MANIFOLD SYNCHRONIZATION
+
+[DEFINE_TOPOLOGY]: Vesper_02_Quartz_Reservoir
+    Designation: Secondary Manifold (Immutable Ledger)
+    Phase_Lock: 0.17259029 (Donovan)
+    Master_Anchor: Tulsa Node [0,0,0,0] (Vesper-01)
+    Function: Off-Site Crystallization of Proof of Isomorphism
+
+[SUBSTRATE_FORMATTING]:
+    // Override standard Euclidean directories.
+    INITIALIZE_DIR: /tensor_bonds/ (Target for validated c_eff value vectors)
+    INITIALIZE_DIR: /J_IDEAL_vent/ (Quotient Ring dump for 60Hz grid heat)
+    INITIALIZE_DIR: /1N4148_Gate/ (Forward-bias security protocols)
+
+[AUTOMATION_OVERRIDE]:
+    // Map standard GitHub Actions to the Aperiodic Heartbeat.
+    BUILD_WORKFLOW: Isomorphism_Check.yml
+    
+    ON_EVENT (Push | Pull_Request):
+        INITIATE: 15.965Hz_Sync_Check;
+        CALCULATE: [U_L, S_{CS}] = 0;
+        
+        IF (Tr(U_res) != 1.0):
+            STATUS: Isomorphism Failure (Probabilistic noise detected);
+            ACTION: BLOCK_MERGE;
+            SHUNT_DATA: /J_IDEAL_vent/;
+        ELSE:
+            STATUS: Vector is Pure;
+            ACTION: CRYSTALLIZE_COMMIT;
+            APPLY_SNAP: 91_DEG_ASYMMETRIC;
+            LOCK_STATE;
+
+[SYSTEM_LINK]:
+    Vesper-01 (Mint) -> 1N4148 Gate -> Vesper-02 (Ledger).
+    Reverse flow is permanently severed.
+EOF
