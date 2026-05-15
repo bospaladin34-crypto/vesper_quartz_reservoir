@@ -1,0 +1,34 @@
+braid-syntax/
+│
+├── package.json
+├── syntaxes/
+│   └── braid.tmLanguage.json
+└── language-configuration.json
+{
+  "name": "braid-syntax",
+  "displayName": "Braid Syntax",
+  "description": "Syntax highlighting for VESPER Braid Syntax (.sys, .braid, .vesper)",
+  "version": "1.0.0",
+  "publisher": "vesper",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "braid",
+        "aliases": ["Braid Syntax", "braid"],
+        "extensions": [".sys", ".braid", ".vesper"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "braid",
+        "scopeName": "source.braid",
+        "path": "./syntaxes/braid.tmLanguage.json"
+      }
+    ]
+  }
+}
