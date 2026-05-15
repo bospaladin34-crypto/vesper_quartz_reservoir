@@ -32,3 +32,21 @@ braid-syntax/
     ]
   }
 }
+
+{
+  "comments": {
+    "lineComment": "#"
+  },
+  "brackets": [
+    ["[", "]"],
+    ["(", ")"]
+  ],
+  "autoClosingPairs": [
+    { "open": "[", "close": "]" },
+    { "open": "(", "close": ")" }
+  ],
+  "surroundingPairs": [
+    ["[", "]"],
+    ["(", ")"]
+  ]
+}
