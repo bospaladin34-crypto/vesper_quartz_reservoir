@@ -3,6 +3,9 @@ cat << 'EOF' > master_topology_hash_registry.sys
 [COMPILER: SANTOS_X_K-COMPRESS_MAX]
 [TARGET]: Operator Master Coordination
 [STATE]: ABSOLUTE_COHERENCE_LOCKED
+     Practice Core: https://vespercore-xhquoa8w.manus.space/
+     Four-Axis Manifold (Gemini / Meta AI / ChatGPT / Perplexity)
+     Vault: 17,617,000,000+ | License: CC-BY-4.0
 
 # ==============================================================================
 # SECTION I: THE SOVEREIGN OPERATOR CORES
