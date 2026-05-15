@@ -1,0 +1,163 @@
+import re
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
+
+# ============================================================
+# AST Structures
+# ============================================================
+
+@dataclass
+class BraidBlock:
+    block_type: str
+    block_name: str
+    keys: Dict[str, Any] = field(default_factory=dict)
+    operators: Dict[str, str] = field(default_factory=dict)
+
+@dataclass
+class BraidDocument:
+    blocks: Dict[str, BraidBlock] = field(default_factory=dict)
+    keys: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class SantosLagrangian:
+    L0: Optional[str] = None
+    divergence: Optional[str] = None
+    renorm: Optional[str] = None
+    fgr: Optional[str] = None
+    chandra: Optional[str] = None
+
+# ============================================================
+# Tokenizer
+# ============================================================
+
+TOKEN_SPEC = [
+    ("BLOCK_HEADER", r"\[(?P<block_type>[A-Z_]+)\s*:\s*(?P<block_name>[A-Z0-9_]+)\]"),
+    ("ASSIGN",       r"::="),
+    ("IDENT",        r"[A-Za-z0-9_\.\-]+"),
+    ("NUMBER",       r"[+-]?\d+(\.\d+)?([eE][+-]?\d+)?"),
+    ("OP_EXPR",      r"[A-Za-z0-9_\.\-\(\)\/\*\+\s]+"),
+    ("HASH",         r"#.*"),
+    ("NEWLINE",      r"\n"),
+    ("SKIP",         r"[ \t\r]+"),
+]
+
+MASTER_REGEX = "|".join(f"(?P<{name}>{pattern})" for name, pattern in TOKEN_SPEC)
+TOKEN_RE = re.compile(MASTER_REGEX)
+
+@dataclass
+class Token:
+    type: str
+    value: str
+
+def tokenize(text: str) -> List[Token]:
+    tokens = []
+    for match in TOKEN_RE.finditer(text):
+        kind = match.lastgroup
+        value = match.group(0)
+        if kind == "SKIP" or kind == "HASH" or kind == "NEWLINE":
+            continue
+        tokens.append(Token(kind, value.strip()))
+    return tokens
+
+# ============================================================
+# Parser
+# ============================================================
+
+class BraidParser:
+    def __init__(self, tokens: List[Token]):
+        self.tokens = tokens
+        self.pos = 0
+
+    def current(self) -> Optional[Token]:
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def accept(self, *types: str) -> Optional[Token]:
+        tok = self.current()
+        if tok and tok.type in types:
+            self.pos += 1
+            return tok
+        return None
+
+    def expect(self, *types: str) -> Token:
+        tok = self.current()
+        if not tok or tok.type not in types:
+            raise SyntaxError(f"Expected {types}, got {tok.type if tok else 'EOF'}")
+        self.pos += 1
+        return tok
+
+    def parse(self) -> BraidDocument:
+        doc = BraidDocument()
+        while self.current():
+            tok = self.current()
+            if tok.type == "BLOCK_HEADER":
+                block = self.parse_block()
+                key = f"{block.block_type}:{block.block_name}"
+                doc.blocks[key] = block
+            elif tok.type == "IDENT":
+                k, v = self.parse_assignment()
+                doc.keys[k] = v
+            else:
+                self.pos += 1
+        return doc
+
+    def parse_block(self) -> BraidBlock:
+        header = self.expect("BLOCK_HEADER")
+        block_type, block_name = header.value.strip("[]").split(":")
+        block = BraidBlock(block_type, block_name)
+
+        while self.current() and self.current().type != "BLOCK_HEADER":
+            if self.current().type == "IDENT":
+                k, v = self.parse_assignment()
+                if "(" in v or "." in v:
+                    block.operators[k] = v
+                else:
+                    block.keys[k] = v
+            else:
+                self.pos += 1
+
+        return block
+
+    def parse_assignment(self):
+        ident = self.expect("IDENT")
+        self.expect("ASSIGN")
+        value = self.parse_value()
+        return ident.value, value
+
+    def parse_value(self) -> str:
+        tok = self.current()
+        if not tok:
+            return ""
+        self.pos += 1
+        return tok.value
+
+# ============================================================
+# Lagrangian Builder
+# ============================================================
+
+def build_santos_lagrangian(doc: BraidDocument) -> SantosLagrangian:
+    L = SantosLagrangian()
+
+    for block in doc.blocks.values():
+        for key, op in block.operators.items():
+            if key == "L0":
+                L.L0 = op
+            elif "DIV" in key.upper():
+                L.divergence = op
+            elif "RENORM" in key.upper():
+                L.renorm = op
+            elif "FGR" in key.upper():
+                L.fgr = op
+            elif "CH" in key.upper():
+                L.chandra = op
+
+    return L
+
+# ============================================================
+# Convenience API
+# ============================================================
+
+def parse_braid_and_emit_lagrangian(text: str) -> SantosLagrangian:
+    tokens = tokenize(text)
+    parser = BraidParser(tokens)
+    doc = parser.parse()
+    return build_santos_lagrangian(doc)
