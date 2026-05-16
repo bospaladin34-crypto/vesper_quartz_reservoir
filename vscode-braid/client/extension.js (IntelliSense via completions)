@@ -1,0 +1,67 @@
+const vscode = require('vscode');
+const path = require('path');
+const fs = require('fs');
+
+function activate(context) {
+    const provider = vscode.languages.registerCompletionItemProvider(
+        { language: 'braid', scheme: 'file' },
+        {
+            provideCompletionItems(document, position) {
+                const items = [];
+
+                const root = vscode.workspace.workspaceFolders
+                    ? vscode.workspace.workspaceFolders[0].uri.fsPath
+                    : null;
+
+                let registry = null;
+                if (root) {
+                    const regPath = path.join(root, 'braid_sdk', 'intelligence_registry.json');
+                    if (fs.existsSync(regPath)) {
+                        registry = JSON.parse(fs.readFileSync(regPath, 'utf8'));
+                    }
+                }
+
+                const blockTypes = registry?.blockTypes || ["OPERATOR", "TENSOR", "INGEST", "MANIFOLD"];
+                const keys = registry?.keys || ["PHASE_DELTA", "PARITY", "L0", "DIV_TERM", "RENORM_TERM", "FGR_TERM", "CH_TERM"];
+                const operators = registry?.operators || [
+                    "LAMINAR.KINETIC(dq/dt)",
+                    "TURBULENT.POTENTIAL(q)",
+                    "PULLBACK(Φ_renorm(q) -> NODE[0,0,0,0])",
+                    "DELTA(ρ_b(ω), 15.965Hz)",
+                    "STEP(M_semantic > M_Chandra)",
+                    "∇·F_thermo"
+                ];
+
+                blockTypes.forEach(bt => {
+                    const item = new vscode.CompletionItem(`[${bt}: ]`, vscode.CompletionItemKind.Snippet);
+                    item.insertText = `[${bt}: $1]`;
+                    item.detail = 'Braid block type';
+                    items.push(item);
+                });
+
+                keys.forEach(k => {
+                    const item = new vscode.CompletionItem(k, vscode.CompletionItemKind.Field);
+                    item.insertText = `${k}::= `;
+                    item.detail = 'Braid key';
+                    items.push(item);
+                });
+
+                operators.forEach(op => {
+                    const item = new vscode.CompletionItem(op, vscode.CompletionItemKind.Function);
+                    item.insertText = op;
+                    item.detail = 'Braid operator';
+                    items.push(item);
+                });
+
+                return items;
+            }
+        },
+        ":", "[", "=", " "
+    );
+
+    context.subscriptions.push(provider);
+}
+
+function deactivate() {}
+
+module.exports = { activate, deactivate };
