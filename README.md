@@ -10,6 +10,8 @@
 ![Deterministic Physics‑Driven](https://img.shields.io/badge/Model-Deterministic_Physics--Driven-blue)
 ![No Entropy / No Keys](https://img.shields.io/badge/Security-No_Entropy_/_No_Keys-lightgrey)
 
+![No Cryptography](https://img.shields.io/badge/Cryptography-Not_Used-red)
+
 ## 🔐 Security & Classification
 
 This repository implements a **Deterministic Physics‑Driven Computational Framework**.  
