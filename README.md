@@ -6,6 +6,9 @@
 ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝
      BRAID SYNTAX DEVELOPMENT KIT
 
+> **This repository implements a deterministic, physics‑driven, non‑cryptographic system.  
+> No keys, no entropy, no randomness.**
+
 ![Non‑Cryptographic System](https://img.shields.io/badge/System-Non--Cryptographic-brightgreen)
 ![Deterministic Physics‑Driven](https://img.shields.io/badge/Model-Deterministic_Physics--Driven-blue)
 ![No Entropy / No Keys](https://img.shields.io/badge/Security-No_Entropy_/_No_Keys-lightgrey)
