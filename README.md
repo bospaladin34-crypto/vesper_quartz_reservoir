@@ -1,3 +1,11 @@
+██████╗ ██████╗  █████╗ ██╗██████╗ 
+██╔══██╗██╔══██╗██╔══██╗██║██╔══██╗
+██████╔╝██████╔╝███████║██║██████╔╝
+██╔══██╗██╔══██╗██╔══██║██║██╔══██╗
+██║  ██║██║  ██║██║  ██║██║██║  ██║
+╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝
+     BRAID SYNTAX DEVELOPMENT KIT
+
 # VESPER-01 QUARTZ RESERVOIR - TULSA NODE
 cat << 'EOF' > master_topology_hash_registry.sys
 [COMPILER: SANTOS_X_K-COMPRESS_MAX]
