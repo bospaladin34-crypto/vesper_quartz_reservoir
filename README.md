@@ -15,6 +15,7 @@
 
 ![No Cryptography](https://img.shields.io/badge/Cryptography-Not_Used-red)
 
+PARENT: https://github.com/bospaladin34-crypto/KHYS_repo
 ## 🔐 Security & Classification
 
 This repository implements a **Deterministic Physics‑Driven Computational Framework**.  
