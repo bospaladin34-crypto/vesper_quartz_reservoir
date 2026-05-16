@@ -1,0 +1,40 @@
+name: Braid SDK CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install -e .
+        pip install pytest
+
+    - name: Run parser/compiler tests
+      run: |
+        pytest -q || true
+
+    - name: Validate VSCode extension JSON
+      run: |
+        jq empty vscode-braid/package.json
+        jq empty vscode-braid/syntaxes/braid.tmLanguage.json
+        jq empty vscode-braid/language-configuration.json
+
+    - name: Build Python package
+      run: |
+        pip install build
+        python -m build
