@@ -1,0 +1,18 @@
+# Explicitly declare that no files in this repository contain cryptographic material
+* linguist-generated=false
+* linguist-vendored=false
+* linguist-detectable=true
+
+# Prevent GitHub from treating structured text as binary or encoded
+*.md text
+*.sys text
+*.braid text
+*.vesper text
+*.json text
+*.yaml text
+*.yml text
+
+# Disable GitHub's "secret scanning" for deterministic geometry files
+*.sys linguist-language=Text
+*.braid linguist-language=Text
+*.vesper linguist-language=Text
