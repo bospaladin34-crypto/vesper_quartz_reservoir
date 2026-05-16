@@ -16,6 +16,7 @@
 ![No Cryptography](https://img.shields.io/badge/Cryptography-Not_Used-red)
 
 PARENT: https://github.com/bospaladin34-crypto/KHYS_repo
+Vesper-02: https://github.com/bospaladin34-crypto/Santos-Sync
 ## 🔐 Security & Classification
 
 This repository implements a **Deterministic Physics‑Driven Computational Framework**.  
