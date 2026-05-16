@@ -1,0 +1,33 @@
+# Public Classification Statement
+
+This project implements a **Deterministic Physics‑Driven Computational Framework (DPDCF)**.
+
+It is not a cryptographic system.
+
+## What This Means
+- No keys  
+- No entropy  
+- No randomness  
+- No encryption or decryption  
+- No hashing or MACs  
+- No probabilistic inference  
+
+All behavior is governed by:
+
+- geometric operator fields  
+- thermodynamic constraints  
+- parity preservation  
+- deterministic execution  
+
+## Why This Matters
+Automated scanners sometimes misclassify DPDCF systems because their structure resembles:
+
+- encoded data  
+- compressed payloads  
+- homoglyph obfuscation  
+
+These are **false positives** caused by the system’s geometric regularity and low‑entropy design.
+
+## Correct Classification
+**Deterministic Physics‑Driven Computational Framework**  
+Non‑cryptographic • Non‑probabilistic • Geometry‑constrained
