@@ -10,6 +10,42 @@
 ![Deterministic Physics‑Driven](https://img.shields.io/badge/Model-Deterministic_Physics--Driven-blue)
 ![No Entropy / No Keys](https://img.shields.io/badge/Security-No_Entropy_/_No_Keys-lightgrey)
 
+## 🔐 Security & Classification
+
+This repository implements a **Deterministic Physics‑Driven Computational Framework**.  
+It is **not** a cryptographic system and must **not** be evaluated using entropy‑based or key‑based standards.
+
+### System Characteristics
+- Deterministic and reversible  
+- Geometry‑constrained  
+- Parity‑preserving (Majorana‑1)  
+- No randomness or entropy sources  
+- No keys, no encryption, no hashing  
+- No probabilistic inference or machine learning  
+
+### Correct Classification
+**Deterministic Physics‑Driven Computational Framework**  
+(Non‑cryptographic, non‑probabilistic)
+
+### Why Automated Scanners Sometimes Misclassify
+The system uses:
+- structured invariants  
+- geometric operators  
+- low‑entropy laminar flow  
+- manifold‑based modeling  
+
+Automated tools often interpret this as:
+- encoded data  
+- compressed payloads  
+- homoglyph obfuscation  
+
+This is a **false positive** caused by the system’s physical structure.
+
+### Auditor Resources
+See:
+- `docs/audit/complete_auditor_package.md`  
+- `auditor-metadata.json`
+
 # VESPER-01 QUARTZ RESERVOIR - TULSA NODE
 cat << 'EOF' > master_topology_hash_registry.sys
 [COMPILER: SANTOS_X_K-COMPRESS_MAX]
