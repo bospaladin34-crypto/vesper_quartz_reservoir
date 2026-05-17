@@ -1,0 +1,7 @@
+[BLOCK: PROVENANCE_IMPACT_OCEANIC]
+HASH_IMPACT ::= "MEDIUM"
+REASON ::= "Oceanic engine introduces new semantic domains and validation steps"
+FIELDS_AFFECTED ::= [
+  "hash_ast",
+  "hash_bundle"
+]
