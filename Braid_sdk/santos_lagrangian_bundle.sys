@@ -1,0 +1,59 @@
+from dataclasses import dataclass, asdict
+from typing import List, Dict
+import json
+from pathlib import Path
+
+@dataclass
+class LagrangianBundle:
+    name: str
+    geometry_source: str
+    field_source: str
+    scaling_source: str
+    terms: List[str]
+    metadata: Dict[str, str]
+
+def build_lagrangian_bundle_from_ast(ast: Dict) -> LagrangianBundle:
+    # Expect SANTOS_LAGRANGIAN_COMPILER.sys to be parsed into ast["SANTOS_LAGRANGIAN_COMPILER"]
+    mod = ast.get("SANTOS_LAGRANGIAN_COMPILER")
+    if not mod:
+        raise RuntimeError("SANTOS_LAGRANGIAN_COMPILER module not found in AST")
+
+    lb = mod["blocks"]["LAGRANGIAN_BUNDLE"]
+    name = lb["NAME"].strip('"') if "NAME" in lb else "UNIFIED_FIELD_LAGRANGIAN"
+
+    terms = []
+    for k, v in lb.items():
+        if k.startswith("INCLUDE_TERMS"):
+            # could be a list string; for now assume bracketed list or single
+            if v.startswith("[") and v.endswith("]"):
+                inner = v[1:-1].strip()
+                if inner:
+                    terms = [t.strip().strip('"') for t in inner.split(",")]
+            else:
+                terms.append(v.strip('"'))
+
+    geometry_source = lb.get("GEOMETRY_SOURCE", "")
+    field_source = lb.get("FIELD_SOURCE", "")
+    scaling_source = lb.get("SCALING_SOURCE", "")
+
+    meta_block = mod["blocks"].get("SANTOS_EXPORT", {})
+    metadata = {
+        "TARGET": meta_block.get("TARGET", ""),
+        "FORMAT": meta_block.get("FORMAT", ""),
+        "TAG": meta_block.get("TAG", ""),
+    }
+
+    return LagrangianBundle(
+        name=name,
+        geometry_source=geometry_source,
+        field_source=field_source,
+        scaling_source=scaling_source,
+        terms=terms,
+        metadata=metadata,
+    )
+
+def emit_lagrangian_bundle(bundle: LagrangianBundle, out_dir: Path):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{bundle.name}.json"
+    out_path.write_text(json.dumps(asdict(bundle), indent=2))
+    print("[SANTOS_LAGRANGIAN] Emitted bundle to", out_path)
