@@ -1,0 +1,50 @@
+import re
+from pathlib import Path
+
+MODULE_RE = re.compile(r'^\s*\[MODULE:\s*([A-Z0-9_]+)\s*\]\s*$')
+BLOCK_RE = re.compile(r'^\s*\[BLOCK:\s*([A-Z0-9_]+)\s*\]\s*$')
+KEYVAL_RE = re.compile(r'^\s*([A-Z0-9_]+)\s*::=\s*(.+?)\s*$')
+
+def parse_sys_file(path: Path):
+    modules = {}
+    current_module = None
+    current_block = None
+
+    with path.open() as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+
+            m_mod = MODULE_RE.match(line)
+            if m_mod:
+                current_module = m_mod.group(1)
+                modules.setdefault(current_module, {"blocks": {}, "meta": {}})
+                current_block = None
+                continue
+
+            m_block = BLOCK_RE.match(line)
+            if m_block:
+                current_block = m_block.group(1)
+                modules[current_module]["blocks"].setdefault(current_block, {})
+                continue
+
+            m_kv = KEYVAL_RE.match(line)
+            if m_kv and current_module:
+                key, val = m_kv.group(1), m_kv.group(2)
+                # strip quotes if present
+                if val.startswith('"') and val.endswith('"'):
+                    val = val[1:-1]
+                target = modules[current_module]["meta"] if current_block is None \
+                         else modules[current_module]["blocks"][current_block]
+                target[key] = val
+                continue
+
+    return modules
+
+def parse_all_sys(root: Path):
+    all_modules = {}
+    for f in root.rglob("*.sys"):
+        mod = parse_sys_file(f)
+        all_modules.update(mod)
+    return all_modules
