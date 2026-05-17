@@ -1,0 +1,41 @@
+[MODULE: BRAID_CLI]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Command-line interface for Braid auto-compilation and Santos integration"
+
+IMPORT ::= [
+  "BRAID_AUTOCOMPILER",
+  "SANTOS_LAGRANGIAN_COMPILER",
+  "BRAID_RESERVOIR_BRIDGE"
+]
+
+[BLOCK: COMMANDS]
+CMD_1_NAME ::= "compile"
+CMD_1_DESC ::= "Compile all .sys modules into .braid artifacts"
+CMD_1_PIPELINE ::= ["PARSE", "VALIDATE", "LINK", "EMIT"]
+
+CMD_2_NAME ::= "compile-all"
+CMD_2_DESC ::= "Compile + export to reservoir + prepare Santos Lagrangian"
+CMD_2_PIPELINE ::= [
+  "PARSE",
+  "VALIDATE",
+  "LINK",
+  "EMIT",
+  "RESERVOIR_EXPORT",
+  "SANTOS_LAGRANGIAN"
+]
+
+CMD_3_NAME ::= "lagrangian"
+CMD_3_DESC ::= "Build Santos Lagrangian bundle only"
+CMD_3_PIPELINE ::= ["SANTOS_LAGRANGIAN"]
+
+[BLOCK: SANTOS_LAGRANGIAN]
+SOURCE ::= "SANTOS_LAGRANGIAN_COMPILER.LAGRANGIAN_BUNDLE"
+TARGET ::= "SANTOS_SYNC"
+
+[BLOCK: RESERVOIR_EXPORT]
+SOURCE ::= "./Braid_compiled/"
+TARGET ::= "VESPER_QUARTZ_RESERVOIR"
+
+[EXPORT]
+EXPORTS ::= ["COMMANDS"]
