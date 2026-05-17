@@ -1,0 +1,53 @@
+[MODULE: COMPILER_PROVENANCE]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Provenance, hashing, and identity spec for compiled artifacts and Lagrangian bundles"
+
+[BLOCK: HASH_SPEC]
+HASH_ALGO ::= "SHA3-512"
+HASH_SCOPE_SYS ::= "RAW_SYS_CONTENT"
+HASH_SCOPE_AST ::= "NORMALIZED_AST_JSON"
+HASH_SCOPE_BUNDLE ::= "LAGRANGIAN_BUNDLE_JSON"
+
+[BLOCK: IDENTITY_FIELDS]
+FIELD_1 ::= "hash_sys"
+FIELD_2 ::= "hash_ast"
+FIELD_3 ::= "hash_bundle"
+FIELD_4 ::= "git_commit"
+FIELD_5 ::= "timestamp_utc"
+
+[BLOCK: BUNDLE_PROVENANCE_EMBED]
+EMBED_IN_JSON ::= TRUE
+JSON_FIELD_NAME ::= "provenance"
+INCLUDE_FIELDS ::= [
+  "hash_sys",
+  "hash_ast",
+  "hash_bundle",
+  "git_commit",
+  "timestamp_utc"
+]
+
+[BLOCK: ARTIFACT_NAMING]
+SYS_SUFFIX ::= ".sys"
+JSON_SUFFIX ::= ".json"
+BRAID_SUFFIX ::= ".braid"
+NAME_PATTERN ::= "<BASENAME>__<HASH_BUNDLE_SHORT><SUFFIX>"
+
+[BLOCK: PROVENANCE_INVARIANTS]
+INVARIANT_1 ::= "IF CONTENT CHANGES, HASH_BUNDLE MUST CHANGE"
+INVARIANT_2 ::= "HASH_AST MUST BE DERIVED FROM NORMALIZED_AST_ONLY"
+INVARIANT_3 ::= "HASH_SYS MUST BE DERIVED FROM RAW_SYS_BYTES"
+INVARIANT_4 ::= "GIT_COMMIT + HASH_BUNDLE UNIQUELY IDENTIFY BUILD STATE"
+
+[BLOCK: EXAMPLE_PROVENANCE_JSON]
+EXAMPLE ::= "{ \"name\": \"UNIFIED_FIELD_LAGRANGIAN\", \"geometry_source\": \"CORE_GEOMETRY.MANIFOLD_48D\", \"field_source\": \"SCALAR_FIELD_DYNAMICS.PHI_FIELD\", \"scaling_source\": \"FREQUENCY_AND_SCALING.SCALING_RELATIONS\", \"terms\": [\"EINSTEIN_HILBERT\", \"SCALAR_KINETIC\"], \"metadata\": { \"TARGET\": \"SANTOS_SYNC\", \"FORMAT\": \"LAGRANGIAN_PACKAGE\", \"TAG\": \"UNIFIED_FIELD_THEORY_V1\" }, \"provenance\": { \"hash_sys\": \"...\", \"hash_ast\": \"...\", \"hash_bundle\": \"...\", \"git_commit\": \"...\", \"timestamp_utc\": \"...\" } }"
+
+[EXPORT]
+EXPORTS ::= [
+  "HASH_SPEC",
+  "IDENTITY_FIELDS",
+  "BUNDLE_PROVENANCE_EMBED",
+  "ARTIFACT_NAMING",
+  "PROVENANCE_INVARIANTS",
+  "EXAMPLE_PROVENANCE_JSON"
+]
