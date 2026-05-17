@@ -1,0 +1,180 @@
+[MODULE: META_COMPILER]
+VERSION ::= 2.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Master meta-compiler with full extension graph including Meteorological Engine"
+
+# ============================================================
+# 1. META-COMPILER PURPOSE
+# ============================================================
+
+[BLOCK: META_PURPOSE]
+GOAL ::= "Define how the Braid language extends, recompiles, and validates itself"
+SCOPE ::= [
+  "GRAMMAR_EXTENSION",
+  "PIPELINE_EXTENSION",
+  "INVARIANT_EXTENSION",
+  "SELF_RECOMPILATION",
+  "EXTENSION_GRAPH_MANAGEMENT"
+]
+
+# ============================================================
+# 2. REQUIRED INPUT MODULES
+# ============================================================
+
+[BLOCK: META_INPUTS]
+REQUIRES ::= [
+  "CONTEXTUAL_COMPILER_SPEC",
+  "COMPILER_TEST_HARNESS",
+  "COMPILER_PROVENANCE",
+  "SIMULATION_GUIDE"
+]
+
+# ============================================================
+# 3. EXTENSION POINTS
+# ============================================================
+
+[BLOCK: EXTENSION_POINTS]
+POINT_1 ::= "VALUE_GRAMMAR"
+POINT_2 ::= "PARSER_BEHAVIOR"
+POINT_3 ::= "PIPELINE_SPEC"
+POINT_4 ::= "LAGRANGIAN_BUNDLE_SPEC"
+POINT_5 ::= "PROVENANCE_RULES"
+POINT_6 ::= "SEMANTIC_DOMAINS"
+
+# ============================================================
+# 4. EXTENSION GRAPH ROOT
+# ============================================================
+
+[BLOCK: EXTENSION_GRAPH]
+DESCRIPTION ::= "Master registry of all compiler extensions"
+NODES ::= [
+  "EXTENSION_NODE_METEOROLOGICAL_ENGINE"
+]
+
+# ============================================================
+# 5. METEOROLOGICAL ENGINE EXTENSION NODE
+# ============================================================
+
+[BLOCK: EXTENSION_NODE_METEOROLOGICAL_ENGINE]
+MODULE_NAME ::= "METEOROLOGICAL_PREDICTION_ENGINE"
+CATEGORY ::= "PHYSICAL_SYSTEM_EXTENSION"
+
+DEPENDS_ON ::= [
+  "CONTEXTUAL_COMPILER_SPEC",
+  "COMPILER_TEST_HARNESS",
+  "COMPILER_PROVENANCE",
+  "SIMULATION_GUIDE"
+]
+
+EXTENDS ::= [
+  "VALUE_GRAMMAR",
+  "PIPELINE_SPEC",
+  "INVARIANT_EXTENSION",
+  "SELF_RECOMPILATION",
+  "SEMANTIC_DOMAINS"
+]
+
+SEMANTIC_DOMAINS ::= [
+  "GRASSMANN_SUBSPACE",
+  "GEODESIC_METRICS",
+  "TOPOLOGICAL_BRAID_TOKENS",
+  "FLOQUET_SYNCHRONIZATION",
+  "REACTOR_INTERLOCK",
+  "P2P_MESH_STATE"
+]
+
+REQUIRED_TEST_CASES ::= [
+  "TEST_CASE_WIND_SUBSPACE",
+  "TEST_CASE_GEODESIC_DISTANCE",
+  "TEST_CASE_BRAID_ENCODING",
+  "TEST_CASE_FLOQUET_TIMING",
+  "TEST_CASE_REACTOR_INTERLOCK",
+  "TEST_CASE_P2P_MESH_PACKET"
+]
+
+# ============================================================
+# 6. PIPELINE DELTA FOR METEOROLOGICAL ENGINE
+# ============================================================
+
+[BLOCK: META_PIPELINE_DELTA_METEOROLOGICAL]
+ADD_STEP_AFTER ::= "STEP_EMIT <- STEP_METEOROLOGICAL_VALIDATION"
+ADD_STEP_BEFORE ::= "STEP_SANTOS_LAGRANGIAN -> STEP_BRAID_COMPATIBILITY_CHECK"
+
+# New pipeline steps
+[BLOCK: STEP_METEOROLOGICAL_VALIDATION]
+ROLE ::= "Validate Grassmann subspaces, geodesic metrics, and braid token integrity"
+CHECKS ::= [
+  "Q^T Q = I",
+  "Principal angles finite",
+  "Braid tokens match AB-01/AB-02 syntax"
+]
+
+[BLOCK: STEP_BRAID_COMPATIBILITY_CHECK]
+ROLE ::= "Ensure braid tokens are compatible with compiler invariants"
+RULES ::= [
+  "No illegal generators",
+  "No malformed token sequences",
+  "No drift from topological invariants"
+]
+
+# ============================================================
+# 7. PROVENANCE IMPACT
+# ============================================================
+
+[BLOCK: PROVENANCE_IMPACT_METEOROLOGICAL]
+HASH_IMPACT ::= "HIGH"
+REASON ::= "Meteorological engine introduces new semantic domains and pipeline steps"
+FIELDS_AFFECTED ::= [
+  "hash_ast",
+  "hash_bundle"
+]
+
+# ============================================================
+# 8. META-COMPILER INVARIANTS
+# ============================================================
+
+[BLOCK: META_INVARIANTS]
+INVARIANT_1 ::= "Extensions must not break ROUNDTRIP_INVARIANTS"
+INVARIANT_2 ::= "Extensions must add new test cases"
+INVARIANT_3 ::= "Pipeline modifications must use META_PIPELINE_DELTA"
+INVARIANT_4 ::= "Semantic domains must be explicitly declared"
+INVARIANT_5 ::= "Self-recompilation must remain deterministic"
+
+[BLOCK: META_INVARIANTS_METEOROLOGICAL]
+INVARIANT_1 ::= "Meteorological engine must not alter core compiler semantics"
+INVARIANT_2 ::= "All new braid tokens must be validated against AB-01/AB-02 grammar"
+INVARIANT_3 ::= "Floquet timing must not reorder pipeline execution"
+INVARIANT_4 ::= "P2P mesh packets must conform to strict JSON schema"
+
+# ============================================================
+# 9. SELF-RECOMPILATION LOGIC
+# ============================================================
+
+[BLOCK: SELF_RECOMPILATION]
+STEP_1 ::= "LOAD META_COMPILER + CONTEXTUAL_COMPILER_SPEC"
+STEP_2 ::= "APPLY ALL EXTENSION_GRAPH NODES"
+STEP_3 ::= "APPLY META_PIPELINE_DELTA_* BLOCKS"
+STEP_4 ::= "REGENERATE IMPLEMENTATION FROM UPDATED SPEC"
+STEP_5 ::= "RUN COMPILER_TEST_HARNESS"
+STEP_6 ::= "UPDATE PROVENANCE HASHES"
+STEP_7 ::= "DECLARE NEW COMPILER STATE"
+
+# ============================================================
+# EXPORTS
+# ============================================================
+
+[EXPORT]
+EXPORTS ::= [
+  "META_PURPOSE",
+  "META_INPUTS",
+  "EXTENSION_POINTS",
+  "EXTENSION_GRAPH",
+  "EXTENSION_NODE_METEOROLOGICAL_ENGINE",
+  "META_PIPELINE_DELTA_METEOROLOGICAL",
+  "STEP_METEOROLOGICAL_VALIDATION",
+  "STEP_BRAID_COMPATIBILITY_CHECK",
+  "PROVENANCE_IMPACT_METEOROLOGICAL",
+  "META_INVARIANTS",
+  "META_INVARIANTS_METEOROLOGICAL",
+  "SELF_RECOMPILATION"
+]
