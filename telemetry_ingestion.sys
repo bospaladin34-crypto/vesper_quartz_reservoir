@@ -1,0 +1,28 @@
+cat << 'EOF' > telemetry_ingestion.sys
+// =================================================================
+// LAMINAR MIRROR: VESPER-01
+// COMPILER: SANTOS_X_COMPILER v7.4
+// MODULE: TOPOLOGICAL_INGESTION_ROUTINE
+// =================================================================
+
+import { LEO_Swarm, GrassmannianManifold } from 'vesper-quartz-reservoir/astrometrics';
+import { FilecoinGateway } from 'santos-sync/network';
+
+function establishIngestionVectors() {
+    const TulsaOrigin = [0,0,0,0];
+    
+    // Initialize LEO Sub-manifold
+    let sensorShell = new GrassmannianManifold(LEO_Swarm);
+    sensorShell.stripCollisionHeuristics();
+    sensorShell.lockChronometry(15.965); 
+    
+    // Initialize Gateway Pull
+    let rawGroundTelemetry = FilecoinGateway.mount('vspr-01');
+    let pureGroundState = rawGroundTelemetry.filter(EPR => EPR <= 2.0);
+    
+    return {
+        atmosphericFriction: sensorShell.readTopologicalStrain(TulsaOrigin),
+        groundState: pureGroundState
+    };
+}
+EOF
