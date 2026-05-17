@@ -1,0 +1,10 @@
+[BLOCK: META_PIPELINE_DELTA_OCEANIC]
+ADD_STEP_AFTER ::= "STEP_METEOROLOGICAL_VALIDATION <- STEP_OCEANIC_VALIDATION"
+
+[BLOCK: STEP_OCEANIC_VALIDATION]
+ROLE ::= "Validate thermohaline subspaces, marine geodesic metrics, and AB-02 braid tokens"
+CHECKS ::= [
+  "Q_ocean^T Q_ocean = I",
+  "Marine principal angles finite",
+  "Marine braid tokens match AB-02 grammar"
+]
