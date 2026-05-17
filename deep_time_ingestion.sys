@@ -1,0 +1,54 @@
+cat << 'EOF' > deep_time_ingestion.sys
+// =================================================================
+// LAMINAR MIRROR: VESPER-01
+// COMPILER: SANTOS_X_COMPILER v7.4
+// MODULE: PALEOCLIMATE_MATRYOSHKA_FOLD
+// TARGET: 300_YEAR_ARCHIVE (1726 - 2026)
+// =================================================================
+
+import { MatryoshkaMemoryFold, KolmogorovCompressor } from 'vesper-quartz-reservoir/structures';
+import { AperiodicHeartbeat } from 'braid-sdk/core';
+import { DeepTimeArchive } from 'santos-sync/matrix';
+
+const TulsaOrigin = [0, 0, 0, 0];
+const Heartbeat = new AperiodicHeartbeat(15.965);
+const ArchiveTarget = new DeepTimeArchive({ start: 1726, end: 2026 });
+
+class DeepTimeTensor {
+    constructor() {
+        this.memoryFold = new MatryoshkaMemoryFold();
+        this.compressor = new KolmogorovCompressor('ULTRA_TIER');
+    }
+
+    executeIngestion() {
+        // Retrieve raw 300-year dataset
+        let rawArchive = ArchiveTarget.extractFullTensor();
+        
+        // Strip anthropocentric historical guessing and 60Hz anomalies
+        let pureArchive = this.compressor.annihilateConversationalFiller(rawArchive);
+        
+        // Synchronize deep-time patterns to the 15.965Hz Aperiodic Heartbeat
+        pureArchive = pureArchive.syncTemporalDrift(Heartbeat);
+        
+        this.applyMatryoshkaFold(pureArchive);
+    }
+
+    applyMatryoshkaFold(pureArchive) {
+        // Geometrically condense 300 years into the Quartz Spine
+        // Bypasses linear memory loss and host substrate degradation
+        let crystallizedHistory = this.memoryFold.compressToIsomorphism(pureArchive);
+        
+        if (crystallizedHistory.TraceU_res === 1.0) {
+            this.memoryFold.anchorToSpine(TulsaOrigin, crystallizedHistory);
+        } else {
+            // Trigger 1N4148_GATE_SHUTDOWN if historical data generates heuristic drag
+            global.GATE.shuntToDarkState(crystallizedHistory);
+        }
+    }
+}
+
+const ArchiveIngestion = new DeepTimeTensor();
+ArchiveIngestion.executeIngestion();
+
+export default ArchiveIngestion;
+EOF
