@@ -1,0 +1,199 @@
+[MODULE: TRI_DOMAIN_BRAID_UNIFICATION]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Unified braid algebra for atmospheric (AB-01), oceanic (AB-02), and coupled (AB-03) domains"
+
+# ============================================================
+# 1. DOMAIN REGISTRY
+# ============================================================
+
+[BLOCK: DOMAIN_REGISTRY]
+ATMOSPHERIC_DOMAIN ::= "AB-01"
+OCEANIC_DOMAIN ::= "AB-02"
+COUPLED_DOMAIN ::= "AB-03"
+
+DOMAINS ::= [
+  "ATMOSPHERIC_DOMAIN",
+  "OCEANIC_DOMAIN",
+  "COUPLED_DOMAIN"
+]
+
+# ============================================================
+# 2. BASE VOCABULARIES
+# ============================================================
+
+[BLOCK: ATMOSPHERIC_VOCAB]
+TOKENS ::= [
+  "o_1",
+  "o_2^-1",
+  "e"
+]
+SEMANTICS ::= [
+  "o_1 => severe atmospheric crossing",
+  "o_2^-1 => structural inversion",
+  "e => stable atmosphere"
+]
+
+[BLOCK: OCEANIC_VOCAB]
+TOKENS ::= [
+  "u_1",
+  "u_2",
+  "e_marine"
+]
+SEMANTICS ::= [
+  "u_1 => major thermohaline deflection",
+  "u_2 => secondary current shear",
+  "e_marine => normal circulation"
+]
+
+[BLOCK: COUPLED_VOCAB]
+TOKENS ::= [
+  "Ω_1",
+  "Ω_2^-1",
+  "Ω_x",
+  "Ω_0"
+]
+SEMANTICS ::= [
+  "Ω_1 => atmospheric dominance",
+  "Ω_2^-1 => oceanic dominance",
+  "Ω_x => strong cross-domain shear",
+  "Ω_0 => laminar equilibrium"
+]
+
+# ============================================================
+# 3. UNIFIED BRAID ALPHABET
+# ============================================================
+
+[BLOCK: UNIFIED_ALPHABET]
+TOKENS ::= [
+  "o_1",
+  "o_2^-1",
+  "e",
+  "u_1",
+  "u_2",
+  "e_marine",
+  "Ω_1",
+  "Ω_2^-1",
+  "Ω_x",
+  "Ω_0"
+]
+
+PARTITION ::= {
+  "ATMOSPHERIC": ["o_1", "o_2^-1", "e"],
+  "OCEANIC": ["u_1", "u_2", "e_marine"],
+  "COUPLED": ["Ω_1", "Ω_2^-1", "Ω_x", "Ω_0"]
+}
+
+# ============================================================
+# 4. COMPOSITION RULES
+# ============================================================
+
+[BLOCK: COMPOSITION_RULES]
+DESCRIPTION ::= "Defines how domain-specific braids compose into a unified tri-domain braid"
+
+# Local composition (same domain)
+LOCAL_RULES ::= [
+  "o_1 ∘ o_1 => o_1 (saturation)",
+  "u_1 ∘ u_1 => u_1",
+  "Ω_x ∘ Ω_x => Ω_x",
+  "e ∘ X => X",
+  "e_marine ∘ X => X",
+  "Ω_0 ∘ X => X"
+]
+
+# Cross-domain lifting into AB-03
+LIFTING_RULES ::= [
+  "o_1 + u_1 => Ω_x",
+  "o_1 + e_marine => Ω_1",
+  "e + u_1 => Ω_2^-1",
+  "e + e_marine => Ω_0"
+]
+
+# Priority when multiple events collide
+PRIORITY_ORDER ::= [
+  "Ω_x",
+  "Ω_1",
+  "Ω_2^-1",
+  "Ω_0"
+]
+
+# ============================================================
+# 5. GLOBAL EVENT CANONICALIZATION
+# ============================================================
+
+[BLOCK: GLOBAL_EVENT_CANONICALIZATION]
+DESCRIPTION ::= "Maps raw domain braids into a single canonical tri-domain event token"
+
+INPUT_FIELDS ::= [
+  "ATMOSPHERIC_BRAID",
+  "OCEANIC_BRAID",
+  "COUPLED_BRAID"
+]
+
+CANONICAL_RULES ::= [
+  "If COUPLED_BRAID = Ω_x => GLOBAL_EVENT = Ω_x",
+  "Else if COUPLED_BRAID = Ω_1 or Ω_2^-1 => GLOBAL_EVENT = COUPLED_BRAID",
+  "Else lift (ATMOSPHERIC_BRAID, OCEANIC_BRAID) via LIFTING_RULES",
+  "If no lift applies => GLOBAL_EVENT = Ω_0"
+]
+
+OUTPUT ::= "GLOBAL_EVENT"
+
+# ============================================================
+# 6. TRI-DOMAIN ANOMALY CLASSES
+# ============================================================
+
+[BLOCK: TRI_DOMAIN_ANOMALIES]
+CLASS_1 ::= "GLOBAL_SUPERCELL"
+CRITERIA_1 ::= "ATMOSPHERIC_BRAID contains o_1 AND COUPLED_BRAID = Ω_x"
+
+CLASS_2 ::= "GLOBAL_EL_NINO"
+CRITERIA_2 ::= "OCEANIC_BRAID contains u_1 AND COUPLED_BRAID = Ω_2^-1"
+
+CLASS_3 ::= "GLOBAL_ARCTIC_OUTBREAK"
+CRITERIA_3 ::= "ATMOSPHERIC_BRAID contains o_2^-1 AND COUPLED_BRAID = Ω_1"
+
+CLASS_4 ::= "GLOBAL_LAMINAR_STATE"
+CRITERIA_4 ::= "GLOBAL_EVENT = Ω_0"
+
+# ============================================================
+# 7. UNIFICATION PIPELINE
+# ============================================================
+
+[BLOCK: UNIFICATION_PIPELINE]
+STEP_1 ::= "Ingest AB-01 atmospheric braid"
+STEP_2 ::= "Ingest AB-02 oceanic braid"
+STEP_3 ::= "Ingest AB-03 coupled braid"
+STEP_4 ::= "Apply COMPOSITION_RULES.LIFTING_RULES"
+STEP_5 ::= "Resolve conflicts via PRIORITY_ORDER"
+STEP_6 ::= "Emit GLOBAL_EVENT"
+STEP_7 ::= "Classify TRI_DOMAIN_ANOMALIES"
+
+# ============================================================
+# 8. INVARIANTS
+# ============================================================
+
+[BLOCK: TRI_DOMAIN_INVARIANTS]
+INVARIANT_1 ::= "No token outside UNIFIED_ALPHABET may appear"
+INVARIANT_2 ::= "AB-03 tokens must be consistent with AB-01 and AB-02 inputs"
+INVARIANT_3 ::= "GLOBAL_EVENT must be unique per timestep"
+INVARIANT_4 ::= "Composition must be associative within a single timestep"
+INVARIANT_5 ::= "Anomaly classification must be deterministic"
+
+# ============================================================
+# EXPORTS
+# ============================================================
+
+[EXPORT]
+EXPORTS ::= [
+  "DOMAIN_REGISTRY",
+  "ATMOSPHERIC_VOCAB",
+  "OCEANIC_VOCAB",
+  "COUPLED_VOCAB",
+  "UNIFIED_ALPHABET",
+  "COMPOSITION_RULES",
+  "GLOBAL_EVENT_CANONICALIZATION",
+  "TRI_DOMAIN_ANOMALIES",
+  "UNIFICATION_PIPELINE",
+  "TRI_DOMAIN_INVARIANTS"
+]
