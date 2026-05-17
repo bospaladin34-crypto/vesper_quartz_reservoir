@@ -1,0 +1,31 @@
+package aperiodic.scalar.field
+
+module core_geometry
+  exports: Manifold48D, SU5AperiodicSector
+
+module scalar_field_dynamics
+  imports: core_geometry.Manifold48D, core_geometry.SU5AperiodicSector
+  exports: PhiField, LagrangianPhi, ModulationOperator, PhasonMass
+
+module frequency_and_scaling
+  imports: scalar_field_dynamics.PhiField
+  exports: UniversalFrequency, ScalingRelations
+
+module experimental_predictions
+  imports:
+    scalar_field_dynamics.ModulationOperator,
+    frequency_and_scaling.UniversalFrequency
+  exports:
+    AtomicClockShift,
+    RabiSplittingEnhancement,
+    QuasicrystalModulationIndex,
+    ClassicalFrequencyLocking
+
+module cosmological_sector
+  imports:
+    scalar_field_dynamics.PhiField,
+    scalar_field_dynamics.LagrangianPhi
+  exports:
+    ScalarCurvatureCoupling,
+    DarkEnergyEquationOfState,
+    CosmologicalPerturbations
