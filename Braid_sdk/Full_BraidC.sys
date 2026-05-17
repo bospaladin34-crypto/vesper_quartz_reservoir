@@ -1,0 +1,295 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import re
+import sys
+from dataclasses import dataclass, asdict
+from pathlib import Path
+from typing import Dict, List, Any
+
+# -------------------------------------------------------------------
+# CONFIG
+# -------------------------------------------------------------------
+
+BRAID_SDK_DIR = Path("./Braid_sdk")
+BRAID_COMPILED_DIR = Path("./Braid_compiled")
+SANTOS_BUNDLES_DIR = Path("./Santos_bundles")
+SANTOS_BUNDLES_SYS_DIR = Path("./Santos_bundles_sys")
+
+AST_CACHE: Dict[str, Any] = {}
+
+# -------------------------------------------------------------------
+# PARSER: .sys -> AST
+# -------------------------------------------------------------------
+
+MODULE_RE = re.compile(r'^\s*\[MODULE:\s*([A-Z0-9_]+)\s*\]\s*$')
+BLOCK_RE = re.compile(r'^\s*\[BLOCK:\s*([A-Z0-9_]+)\s*\]\s*$')
+KEYVAL_RE = re.compile(r'^\s*([A-Z0-9_]+)\s*::=\s*(.+?)\s*$')
+
+
+def parse_value(val: str):
+    val = val.strip()
+    # Array: ["A", "B", ...]
+    if val.startswith("[") and val.endswith("]"):
+        inner = val[1:-1].strip()
+        if not inner:
+            return []
+        parts = [p.strip() for p in inner.split(",")]
+        cleaned = []
+        for p in parts:
+            if p.startswith('"') and p.endswith('"'):
+                p = p[1:-1]
+            cleaned.append(p)
+        return cleaned
+    # Quoted scalar
+    if val.startswith('"') and val.endswith('"'):
+        return val[1:-1]
+    # Try numeric
+    try:
+        if "." in val:
+            return float(val)
+        return int(val)
+    except ValueError:
+        pass
+    # Fallback: raw string
+    return val
+
+
+def parse_sys_file(path: Path):
+    modules: Dict[str, Any] = {}
+    current_module = None
+    current_block = None
+
+    with path.open() as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+
+            m_mod = MODULE_RE.match(line)
+            if m_mod:
+                current_module = m_mod.group(1)
+                modules.setdefault(current_module, {"blocks": {}, "meta": {}})
+                current_block = None
+                continue
+
+            m_block = BLOCK_RE.match(line)
+            if m_block:
+                current_block = m_block.group(1)
+                modules[current_module]["blocks"].setdefault(current_block, {})
+                continue
+
+            m_kv = KEYVAL_RE.match(line)
+            if m_kv and current_module:
+                key, raw_val = m_kv.group(1), m_kv.group(2)
+                val = parse_value(raw_val)
+                target = (
+                    modules[current_module]["meta"]
+                    if current_block is None
+                    else modules[current_module]["blocks"][current_block]
+                )
+                target[key] = val
+                continue
+
+    return modules
+
+
+def parse_all_sys(root: Path):
+    all_modules: Dict[str, Any] = {}
+    for f in root.rglob("*.sys"):
+        mod = parse_sys_file(f)
+        all_modules.update(mod)
+    return all_modules
+
+
+# -------------------------------------------------------------------
+# LAGRANGIAN BUNDLE MODEL
+# -------------------------------------------------------------------
+
+@dataclass
+class LagrangianBundle:
+    name: str
+    geometry_source: str
+    field_source: str
+    scaling_source: str
+    terms: List[str]
+    metadata: Dict[str, str]
+
+
+def build_lagrangian_bundle_from_ast(ast: Dict[str, Any]) -> LagrangianBundle:
+    mod = ast.get("SANTOS_LAGRANGIAN_COMPILER")
+    if not mod:
+        raise RuntimeError("SANTOS_LAGRANGIAN_COMPILER module not found in AST")
+
+    blocks = mod["blocks"]
+    lb = blocks["LAGRANGIAN_BUNDLE"]
+
+    name = lb.get("NAME", "UNIFIED_FIELD_LAGRANGIAN")
+    if isinstance(name, str):
+        name = name
+
+    terms: List[str] = []
+    include_terms = lb.get("INCLUDE_TERMS", [])
+    if isinstance(include_terms, list):
+        terms = [str(t) for t in include_terms]
+    elif isinstance(include_terms, str):
+        terms = [include_terms]
+
+    geometry_source = str(lb.get("GEOMETRY_SOURCE", ""))
+    field_source = str(lb.get("FIELD_SOURCE", ""))
+    scaling_source = str(lb.get("SCALING_SOURCE", ""))
+
+    meta_block = blocks.get("SANTOS_EXPORT", {})
+    metadata = {
+        "TARGET": str(meta_block.get("TARGET", "")),
+        "FORMAT": str(meta_block.get("FORMAT", "")),
+        "TAG": str(meta_block.get("TAG", "")),
+    }
+
+    return LagrangianBundle(
+        name=name,
+        geometry_source=geometry_source,
+        field_source=field_source,
+        scaling_source=scaling_source,
+        terms=terms,
+        metadata=metadata,
+    )
+
+
+def emit_lagrangian_bundle(bundle: LagrangianBundle, out_dir: Path):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{bundle.name}.json"
+    out_path.write_text(json.dumps(asdict(bundle), indent=2))
+    print("[SANTOS_LAGRANGIAN] Emitted bundle JSON to", out_path)
+
+
+# -------------------------------------------------------------------
+# ROUND-TRIP: LAGRANGIAN BUNDLE -> .sys
+# -------------------------------------------------------------------
+
+def quote(val: str) -> str:
+    return f'"{val}"'
+
+
+def emit_bundle_as_sys(bundle: LagrangianBundle, out_dir: Path):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    mod_name = "SANTOS_LAGRANGIAN_BUNDLE_" + bundle.name.upper().replace(" ", "_")
+    out_path = out_dir / f"{mod_name}.sys"
+
+    lines: List[str] = []
+    lines.append(f"[MODULE: {mod_name}]")
+    lines.append("VERSION ::= 1.0.0")
+    lines.append("AUTHOR ::= VESPER-01")
+    lines.append('DESC ::= "Regenerated Santos Lagrangian bundle"')
+    lines.append("")
+
+    lines.append("[BLOCK: LAGRANGIAN_BUNDLE]")
+    lines.append(f"NAME ::= {quote(bundle.name)}")
+    lines.append(f"GEOMETRY_SOURCE ::= {quote(bundle.geometry_source)}")
+    lines.append(f"FIELD_SOURCE ::= {quote(bundle.field_source)}")
+    lines.append(f"SCALING_SOURCE ::= {quote(bundle.scaling_source)}")
+
+    if bundle.terms:
+        term_list = ", ".join(quote(t) for t in bundle.terms)
+        lines.append(f"INCLUDE_TERMS ::= [{term_list}]")
+
+    lines.append("")
+    lines.append("[BLOCK: SANTOS_EXPORT]")
+    for k, v in bundle.metadata.items():
+        lines.append(f"{k} ::= {quote(str(v))}")
+
+    lines.append("")
+    lines.append("[EXPORT]")
+    lines.append('EXPORTS ::= ["LAGRANGIAN_BUNDLE", "SANTOS_EXPORT"]')
+    lines.append("")
+
+    out_path.write_text("\n".join(lines))
+    print("[ROUNDTRIP] Emitted .sys bundle to", out_path)
+
+
+# -------------------------------------------------------------------
+# PIPELINE STEPS
+# -------------------------------------------------------------------
+
+def step_parse():
+    global AST_CACHE
+    print("[PARSE] Scanning .sys modules in", BRAID_SDK_DIR)
+    AST_CACHE = parse_all_sys(BRAID_SDK_DIR)
+    print(f"[PARSE] Parsed {len(AST_CACHE)} modules")
+
+
+def step_validate():
+    print("[VALIDATE] (stub) Laminar + syntax checks OK")
+    # TODO: implement real validation rules
+    pass
+
+
+def step_link():
+    print("[LINK] (stub) Resolving imports and building dependency graph")
+    # TODO: implement real linker
+    pass
+
+
+def step_emit():
+    print("[EMIT] (stub) Writing compiled .braid artifacts to", BRAID_COMPILED_DIR)
+    BRAID_COMPILED_DIR.mkdir(parents=True, exist_ok=True)
+    (BRAID_COMPILED_DIR / "compiled.marker").write_text("OK\n")
+
+
+def step_reservoir_export():
+    print("[RESERVOIR_EXPORT] (stub) Exporting compiled models to Vesper Quartz Reservoir")
+    # TODO: hook into reservoir ingestion
+    pass
+
+
+def step_santos_lagrangian():
+    global AST_CACHE
+    if not AST_CACHE:
+        AST_CACHE = parse_all_sys(BRAID_SDK_DIR)
+    print("[SANTOS_LAGRANGIAN] Building Santos Lagrangian bundle from AST")
+    bundle = build_lagrangian_bundle_from_ast(AST_CACHE)
+    emit_lagrangian_bundle(bundle, SANTOS_BUNDLES_DIR)
+    emit_bundle_as_sys(bundle, SANTOS_BUNDLES_SYS_DIR)
+
+
+PIPELINE_STEPS = {
+    "PARSE": step_parse,
+    "VALIDATE": step_validate,
+    "LINK": step_link,
+    "EMIT": step_emit,
+    "RESERVOIR_EXPORT": step_reservoir_export,
+    "SANTOS_LAGRANGIAN": step_santos_lagrangian,
+}
+
+COMMAND_PIPELINES = {
+    "compile": ["PARSE", "VALIDATE", "LINK", "EMIT"],
+    "compile-all": ["PARSE", "VALIDATE", "LINK", "EMIT", "RESERVOIR_EXPORT", "SANTOS_LAGRANGIAN"],
+    "lagrangian": ["SANTOS_LAGRANGIAN"],
+}
+
+
+def run_pipeline(steps: List[str]):
+    for step in steps:
+        fn = PIPELINE_STEPS.get(step)
+        if fn is None:
+            print(f"[ERROR] Unknown pipeline step: {step}")
+            sys.exit(1)
+        fn()
+
+
+# -------------------------------------------------------------------
+# CLI
+# -------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(prog="braidc", description="Braid SDK compiler CLI")
+    parser.add_argument("command", choices=COMMAND_PIPELINES.keys(), help="Command to run")
+    args = parser.parse_args()
+
+    steps = COMMAND_PIPELINES[args.command]
+    print(f"[braidc] Running command: {args.command}")
+    run_pipeline(steps)
+
+
+if __name__ == "__main__":
+    main()
