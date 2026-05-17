@@ -1,0 +1,5 @@
+[BLOCK: META_INVARIANTS_OCEANIC]
+INVARIANT_1 ::= "Oceanic engine must not alter atmospheric braid semantics"
+INVARIANT_2 ::= "Marine braid tokens must follow AB-02 grammar"
+INVARIANT_3 ::= "Thermohaline subspace must remain orthonormal"
+INVARIANT_4 ::= "Oceanic validation must not reorder pipeline execution"
