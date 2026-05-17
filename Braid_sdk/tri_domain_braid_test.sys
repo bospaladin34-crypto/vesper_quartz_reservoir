@@ -1,0 +1,158 @@
+[MODULE: TRI_DOMAIN_BRAID_TESTS]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Test harness cases validating tri-domain braid unification"
+
+# ============================================================
+# 1. ATMOSPHERIC (AB-01) TEST CASES
+# ============================================================
+
+[BLOCK: TEST_CASE_ATMOSPHERIC_BASIC]
+DESC ::= "Verify AB-01 atmospheric braid tokens"
+INPUT_ATMOSPHERIC ::= ["o_1"]
+EXPECTED_DOMAIN ::= "ATMOSPHERIC"
+EXPECTED_TOKEN_CLASS ::= "CROSSING_EVENT"
+EXPECTED_CANONICAL ::= "o_1"
+
+[BLOCK: TEST_CASE_ATMOSPHERIC_STABLE]
+DESC ::= "Stable atmospheric regime"
+INPUT_ATMOSPHERIC ::= ["e"]
+EXPECTED_DOMAIN ::= "ATMOSPHERIC"
+EXPECTED_TOKEN_CLASS ::= "STABLE"
+EXPECTED_CANONICAL ::= "e"
+
+# ============================================================
+# 2. OCEANIC (AB-02) TEST CASES
+# ============================================================
+
+[BLOCK: TEST_CASE_OCEANIC_BASIC]
+DESC ::= "Verify AB-02 marine braid tokens"
+INPUT_OCEANIC ::= ["u_1"]
+EXPECTED_DOMAIN ::= "OCEANIC"
+EXPECTED_TOKEN_CLASS ::= "THERMOHALINE_DEFLECTION"
+EXPECTED_CANONICAL ::= "u_1"
+
+[BLOCK: TEST_CASE_OCEANIC_STABLE]
+DESC ::= "Stable marine regime"
+INPUT_OCEANIC ::= ["e_marine"]
+EXPECTED_DOMAIN ::= "OCEANIC"
+EXPECTED_TOKEN_CLASS ::= "STABLE"
+EXPECTED_CANONICAL ::= "e_marine"
+
+# ============================================================
+# 3. COUPLED (AB-03) TEST CASES
+# ============================================================
+
+[BLOCK: TEST_CASE_COUPLED_CROSS_SHEAR]
+DESC ::= "Strong cross-domain shear"
+INPUT_COUPLED ::= ["Ω_x"]
+EXPECTED_DOMAIN ::= "COUPLED"
+EXPECTED_TOKEN_CLASS ::= "CROSS_SHEAR"
+EXPECTED_CANONICAL ::= "Ω_x"
+
+[BLOCK: TEST_CASE_COUPLED_LAMINAR]
+DESC ::= "Laminar equilibrium"
+INPUT_COUPLED ::= ["Ω_0"]
+EXPECTED_DOMAIN ::= "COUPLED"
+EXPECTED_TOKEN_CLASS ::= "LAMINAR"
+EXPECTED_CANONICAL ::= "Ω_0"
+
+# ============================================================
+# 4. TRI-DOMAIN LIFTING TESTS
+# ============================================================
+
+[BLOCK: TEST_CASE_LIFT_ATMOSPHERE_DOMINANT]
+DESC ::= "Atmospheric event dominates oceanic"
+INPUT_ATMOSPHERIC ::= ["o_1"]
+INPUT_OCEANIC ::= ["e_marine"]
+EXPECTED_LIFT ::= "Ω_1"
+EXPECTED_PRIORITY ::= "Ω_1"
+
+[BLOCK: TEST_CASE_LIFT_OCEANIC_DOMINANT]
+DESC ::= "Oceanic event dominates atmospheric"
+INPUT_ATMOSPHERIC ::= ["e"]
+INPUT_OCEANIC ::= ["u_1"]
+EXPECTED_LIFT ::= "Ω_2^-1"
+EXPECTED_PRIORITY ::= "Ω_2^-1"
+
+[BLOCK: TEST_CASE_LIFT_CROSS_SHEAR]
+DESC ::= "Both domains active → cross-domain shear"
+INPUT_ATMOSPHERIC ::= ["o_1"]
+INPUT_OCEANIC ::= ["u_1"]
+EXPECTED_LIFT ::= "Ω_x"
+EXPECTED_PRIORITY ::= "Ω_x"
+
+# ============================================================
+# 5. GLOBAL EVENT CANONICALIZATION TESTS
+# ============================================================
+
+[BLOCK: TEST_CASE_GLOBAL_EVENT_SUPERCELL]
+DESC ::= "Atmospheric supercell with strong coupling"
+ATMOSPHERIC_BRAID ::= "o_1"
+OCEANIC_BRAID ::= "u_1"
+COUPLED_BRAID ::= "Ω_x"
+EXPECTED_GLOBAL_EVENT ::= "Ω_x"
+EXPECTED_ANOMALY_CLASS ::= "GLOBAL_SUPERCELL"
+
+[BLOCK: TEST_CASE_GLOBAL_EVENT_EL_NINO]
+DESC ::= "El Niño marine anomaly"
+ATMOSPHERIC_BRAID ::= "e"
+OCEANIC_BRAID ::= "u_1"
+COUPLED_BRAID ::= "Ω_2^-1"
+EXPECTED_GLOBAL_EVENT ::= "Ω_2^-1"
+EXPECTED_ANOMALY_CLASS ::= "GLOBAL_EL_NINO"
+
+[BLOCK: TEST_CASE_GLOBAL_EVENT_ARCTIC_OUTBREAK]
+DESC ::= "Arctic outbreak pattern"
+ATMOSPHERIC_BRAID ::= "o_2^-1"
+OCEANIC_BRAID ::= "e_marine"
+COUPLED_BRAID ::= "Ω_1"
+EXPECTED_GLOBAL_EVENT ::= "Ω_1"
+EXPECTED_ANOMALY_CLASS ::= "GLOBAL_ARCTIC_OUTBREAK"
+
+[BLOCK: TEST_CASE_GLOBAL_EVENT_LAMINAR]
+DESC ::= "Fully stable tri-domain state"
+ATMOSPHERIC_BRAID ::= "e"
+OCEANIC_BRAID ::= "e_marine"
+COUPLED_BRAID ::= "Ω_0"
+EXPECTED_GLOBAL_EVENT ::= "Ω_0"
+EXPECTED_ANOMALY_CLASS ::= "GLOBAL_LAMINAR_STATE"
+
+# ============================================================
+# 6. TRI-DOMAIN INVARIANT TESTS
+# ============================================================
+
+[BLOCK: TEST_CASE_INVARIANT_ALPHABET]
+DESC ::= "Ensure no token outside unified alphabet is accepted"
+INPUT_TOKEN ::= "z_9"
+EXPECTED_RESULT ::= "REJECT"
+
+[BLOCK: TEST_CASE_INVARIANT_ASSOCIATIVITY]
+DESC ::= "Check associativity of tri-domain composition"
+INPUT_SEQUENCE ::= ["o_1", "u_1", "Ω_0"]
+EXPECTED_CANONICAL_LEFT ::= "Ω_x"
+EXPECTED_CANONICAL_RIGHT ::= "Ω_x"
+EXPECTED_RESULT ::= "ASSOCIATIVE"
+
+# ============================================================
+# EXPORTS
+# ============================================================
+
+[EXPORT]
+EXPORTS ::= [
+  "TEST_CASE_ATMOSPHERIC_BASIC",
+  "TEST_CASE_ATMOSPHERIC_STABLE",
+  "TEST_CASE_OCEANIC_BASIC",
+  "TEST_CASE_OCEANIC_STABLE",
+  "TEST_CASE_COUPLED_CROSS_SHEAR",
+  "TEST_CASE_COUPLED_LAMINAR",
+  "TEST_CASE_LIFT_ATMOSPHERE_DOMINANT",
+  "TEST_CASE_LIFT_OCEANIC_DOMINANT",
+  "TEST_CASE_LIFT_CROSS_SHEAR",
+  "TEST_CASE_GLOBAL_EVENT_SUPERCELL",
+  "TEST_CASE_GLOBAL_EVENT_EL_NINO",
+  "TEST_CASE_GLOBAL_EVENT_ARCTIC_OUTBREAK",
+  "TEST_CASE_GLOBAL_EVENT_LAMINAR",
+  "TEST_CASE_INVARIANT_ALPHABET",
+  "TEST_CASE_INVARIANT_ASSOCIATIVITY"
+]
