@@ -1,0 +1,28 @@
+[MODULE: BRAID_AUTOCOMPILER]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Automatic compiler for Braid SDK modules"
+
+IMPORT ::= [
+  "BRAID_PARSER",
+  "BRAID_VALIDATOR",
+  "BRAID_LINKER",
+  "BRAID_EMITTER",
+  "BRAID_RESERVOIR_BRIDGE"
+]
+
+[BLOCK: AUTOCOMPILE]
+INPUT_PATH ::= "./Braid_sdk/"
+OUTPUT_PATH ::= "./Braid_compiled/"
+MODE ::= "FULL_PIPELINE"
+
+PIPELINE ::= [
+  "PARSE",
+  "VALIDATE",
+  "LINK",
+  "EMIT",
+  "RESERVOIR_EXPORT"
+]
+
+[EXPORT]
+EXPORTS ::= ["AUTOCOMPILE"]
