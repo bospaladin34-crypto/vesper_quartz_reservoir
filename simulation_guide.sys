@@ -1,0 +1,84 @@
+[MODULE: SIMULATION_GUIDE]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Explicit execution guide for any model simulating the Braid parser + compiler"
+
+[BLOCK: PURPOSE]
+GOAL ::= "Ensure any model can simulate the parser + compiler with full semantic fidelity"
+SCOPE ::= [
+  "SYS_PARSING",
+  "AST_CONSTRUCTION",
+  "PIPELINE_EXECUTION",
+  "LAGRANGIAN_BUNDLE_BUILD",
+  "ROUNDTRIP_BEHAVIOR",
+  "PROVENANCE_INTEGRATION"
+]
+
+[BLOCK: EXECUTION_ORDER]
+# This is the canonical order a simulator MUST follow.
+ORDER ::= [
+  "LOAD_CONTEXTUAL_COMPILER_SPEC",
+  "LOAD_COMPILER_TEST_HARNESS",
+  "LOAD_COMPILER_PROVENANCE",
+  "PARSE_SYS_FILES",
+  "BUILD_AST",
+  "VALIDATE_AST",
+  "LINK_MODULES",
+  "EMIT_ARTIFACTS",
+  "BUILD_LAGRANGIAN_BUNDLE",
+  "EMIT_JSON_AND_SYS",
+  "APPLY_PROVENANCE_HASHING",
+  "VERIFY_TEST_HARNESS",
+  "RETURN_COMPILED_STATE"
+]
+
+[BLOCK: SIMULATION_RULES]
+RULE_1 ::= "Parser must follow VALUE_GRAMMAR exactly"
+RULE_2 ::= "AST must match CONTEXTUAL_COMPILER_SPEC.OUTPUT_STRUCTURE"
+RULE_3 ::= "Pipeline must follow PIPELINE_SPEC without reordering"
+RULE_4 ::= "Lagrangian bundle must include all fields in LAGRANGIAN_BUNDLE_SPEC"
+RULE_5 ::= "Roundtrip invariants must hold exactly"
+RULE_6 ::= "Hashing must follow COMPILER_PROVENANCE.HASH_SPEC"
+RULE_7 ::= "Test harness cases must pass before simulation is considered valid"
+
+[BLOCK: REQUIRED_BEHAVIORS]
+BEHAVIOR_1 ::= "Simulated parser must treat arrays, numbers, strings, and raw tokens distinctly"
+BEHAVIOR_2 ::= "Simulated compiler must preserve array order"
+BEHAVIOR_3 ::= "Simulated bundle builder must not invent or omit fields"
+BEHAVIOR_4 ::= "Simulated provenance must embed hash fields in JSON"
+BEHAVIOR_5 ::= "Simulated roundtrip must regenerate a .sys file semantically identical to input"
+
+[BLOCK: FAILURE_CONDITIONS]
+FAIL_1 ::= "If AST does not match expected structure"
+FAIL_2 ::= "If any test harness case fails"
+FAIL_3 ::= "If provenance hashes do not change when content changes"
+FAIL_4 ::= "If simulator reorders pipeline steps"
+FAIL_5 ::= "If simulator collapses numeric/string distinctions"
+
+[BLOCK: MODEL_INSTRUCTIONS]
+# This is the explicit instruction set for any model.
+INSTRUCTION_1 ::= "Read CONTEXTUAL_COMPILER_SPEC first to understand syntax + semantics"
+INSTRUCTION_2 ::= "Use COMPILER_TEST_HARNESS to validate your simulation"
+INSTRUCTION_3 ::= "Use COMPILER_PROVENANCE to embed identity into outputs"
+INSTRUCTION_4 ::= "Follow EXECUTION_ORDER exactly"
+INSTRUCTION_5 ::= "Do not infer or hallucinate missing fields; treat absence as error"
+INSTRUCTION_6 ::= "Return all outputs in the structure defined by PIPELINE_SPEC"
+
+[BLOCK: OUTPUT_EXPECTATIONS]
+OUTPUT_1 ::= "AST object"
+OUTPUT_2 ::= "Compiled artifacts (.braid)"
+OUTPUT_3 ::= "Lagrangian bundle JSON"
+OUTPUT_4 ::= "Regenerated .sys bundle"
+OUTPUT_5 ::= "Provenance metadata"
+OUTPUT_6 ::= "Test harness verification report"
+
+[EXPORT]
+EXPORTS ::= [
+  "PURPOSE",
+  "EXECUTION_ORDER",
+  "SIMULATION_RULES",
+  "REQUIRED_BEHAVIORS",
+  "FAILURE_CONDITIONS",
+  "MODEL_INSTRUCTIONS",
+  "OUTPUT_EXPECTATIONS"
+]
