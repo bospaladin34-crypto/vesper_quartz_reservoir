@@ -1,0 +1,88 @@
+[MODULE: META_COMPILER_EXTENSION_GRAPH]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Extension graph node for Meteorological Prediction Engine"
+
+[BLOCK: EXTENSION_NODE_METEOROLOGICAL_ENGINE]
+MODULE_NAME ::= "METEOROLOGICAL_PREDICTION_ENGINE"
+CATEGORY ::= "PHYSICAL_SYSTEM_EXTENSION"
+DEPENDS_ON ::= [
+  "CONTEXTUAL_COMPILER_SPEC",
+  "COMPILER_TEST_HARNESS",
+  "COMPILER_PROVENANCE",
+  "SIMULATION_GUIDE"
+]
+
+EXTENDS ::= [
+  "VALUE_GRAMMAR",
+  "PIPELINE_SPEC",
+  "INVARIANT_EXTENSION",
+  "SELF_RECOMPILATION"
+]
+
+# This module introduces new semantic domains:
+SEMANTIC_DOMAINS ::= [
+  "GRASSMANN_SUBSPACE",
+  "GEODESIC_METRICS",
+  "TOPOLOGICAL_BRAID_TOKENS",
+  "FLOQUET_SYNCHRONIZATION",
+  "REACTOR_INTERLOCK",
+  "P2P_MESH_STATE"
+]
+
+# Required test cases added to the harness:
+REQUIRED_TEST_CASES ::= [
+  "TEST_CASE_WIND_SUBSPACE",
+  "TEST_CASE_GEODESIC_DISTANCE",
+  "TEST_CASE_BRAID_ENCODING",
+  "TEST_CASE_FLOQUET_TIMING",
+  "TEST_CASE_REACTOR_INTERLOCK",
+  "TEST_CASE_P2P_MESH_PACKET"
+]
+
+# Pipeline delta: extend compiler pipeline with meteorological stages
+[META_PIPELINE_DELTA]
+ADD_STEP_AFTER ::= "STEP_EMIT <- STEP_METEOROLOGICAL_VALIDATION"
+ADD_STEP_BEFORE ::= "STEP_SANTOS_LAGRANGIAN -> STEP_BRAID_COMPATIBILITY_CHECK"
+
+# Define new steps
+[BLOCK: STEP_METEOROLOGICAL_VALIDATION]
+ROLE ::= "Validate Grassmann subspaces, geodesic metrics, and braid token integrity"
+CHECKS ::= [
+  "Q^T Q = I",
+  "Principal angles finite",
+  "Braid tokens match AB-01/AB-02 syntax"
+]
+
+[BLOCK: STEP_BRAID_COMPATIBILITY_CHECK]
+ROLE ::= "Ensure braid tokens are compatible with compiler invariants"
+RULES ::= [
+  "No illegal generators",
+  "No malformed token sequences",
+  "No drift from topological invariants"
+]
+
+# Provenance impact
+[BLOCK: PROVENANCE_IMPACT]
+HASH_IMPACT ::= "HIGH"
+REASON ::= "Meteorological engine introduces new semantic domains and pipeline steps"
+FIELDS_AFFECTED ::= [
+  "hash_ast",
+  "hash_bundle"
+]
+
+# Meta invariants for this extension
+[BLOCK: META_INVARIANTS_METEOROLOGICAL]
+INVARIANT_1 ::= "Meteorological engine must not alter core compiler semantics"
+INVARIANT_2 ::= "All new braid tokens must be validated against AB-01/AB-02 grammar"
+INVARIANT_3 ::= "Floquet timing must not reorder pipeline execution"
+INVARIANT_4 ::= "P2P mesh packets must conform to strict JSON schema"
+
+[EXPORT]
+EXPORTS ::= [
+  "EXTENSION_NODE_METEOROLOGICAL_ENGINE",
+  "STEP_METEOROLOGICAL_VALIDATION",
+  "STEP_BRAID_COMPATIBILITY_CHECK",
+  "PROVENANCE_IMPACT",
+  "META_INVARIANTS_METEOROLOGICAL"
+]
