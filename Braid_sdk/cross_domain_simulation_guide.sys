@@ -1,0 +1,88 @@
+[MODULE: CROSS_DOMAIN_SIMULATION_GUIDE]
+VERSION ::= 1.0.0
+AUTHOR ::= VESPER-01
+DESC ::= "Execution guide for external models simulating the tri-domain manifold + braid system"
+
+[BLOCK: PURPOSE]
+GOAL ::= "Ensure any model can simulate atmosphere, ocean, and coupled braids with full semantic fidelity"
+DOMAINS ::= [
+  "ATMOSPHERIC_ENGINE",
+  "OCEANIC_SUBSPACE_ENGINE",
+  "ATMOSPHERIC_OCEANIC_COUPLING",
+  "TRI_DOMAIN_BRAID_UNIFICATION"
+]
+
+[BLOCK: REQUIRED_MODULES]
+MUST_LOAD ::= [
+  "CONTEXTUAL_COMPILER_SPEC",
+  "COMPILER_TEST_HARNESS",
+  "COMPILER_PROVENANCE",
+  "SIMULATION_GUIDE",
+  "METEOROLOGICAL_PREDICTION_ENGINE",
+  "OCEANIC_SUBSPACE_ENGINE",
+  "ATMOSPHERIC_OCEANIC_COUPLING",
+  "TRI_DOMAIN_BRAID_UNIFICATION",
+  "TRI_DOMAIN_BRAID_TESTS"
+]
+
+[BLOCK: EXECUTION_ORDER]
+STEP_1 ::= "Parse all .sys modules and build AST (per CONTEXTUAL_COMPILER_SPEC)"
+STEP_2 ::= "Construct atmospheric Grassmann subspace Q_atm"
+STEP_3 ::= "Construct oceanic Grassmann subspace Q_ocean"
+STEP_4 ::= "Compute geodesic distances d_atm, d_ocean"
+STEP_5 ::= "Compute cross-geodesic coupling d_couple"
+STEP_6 ::= "Encode AB-01, AB-02, and AB-03 braid tokens"
+STEP_7 ::= "Apply TRI_DOMAIN_BRAID_UNIFICATION.COMPOSITION_RULES"
+STEP_8 ::= "Canonicalize GLOBAL_EVENT"
+STEP_9 ::= "Classify TRI_DOMAIN_ANOMALIES"
+STEP_10 ::= "Verify all TRI_DOMAIN_BRAID_TESTS cases"
+STEP_11 ::= "Embed provenance hashes per COMPILER_PROVENANCE"
+STEP_12 ::= "Return full tri-domain compiled state"
+
+[BLOCK: MODEL_RULES]
+RULE_1 ::= "Respect VALUE_GRAMMAR for all numeric, array, and string fields"
+RULE_2 ::= "Treat Q_atm and Q_ocean as orthonormal bases (Q^T Q = I)"
+RULE_3 ::= "Use SVD-based principal angles for all geodesic distances"
+RULE_4 ::= "Only use tokens from TRI_DOMAIN_BRAID_UNIFICATION.UNIFIED_ALPHABET"
+RULE_5 ::= "Apply COMPOSITION_RULES and PRIORITY_ORDER exactly as specified"
+RULE_6 ::= "Use TRI_DOMAIN_BRAID_TESTS as ground truth for correctness"
+
+[BLOCK: FAILURE_CONDITIONS]
+FAIL_1 ::= "Any test case in TRI_DOMAIN_BRAID_TESTS fails"
+FAIL_2 ::= "Any token outside UNIFIED_ALPHABET appears"
+FAIL_3 ::= "Geodesic distances are NaN or infinite"
+FAIL_4 ::= "GLOBAL_EVENT is ambiguous or non-unique per timestep"
+FAIL_5 ::= "Invariants in TRI_DOMAIN_INVARIANTS are violated"
+
+[BLOCK: OUTPUT_SPEC]
+OUTPUT_FIELDS ::= [
+  "Q_atm",
+  "Q_ocean",
+  "d_atm",
+  "d_ocean",
+  "d_couple",
+  "ATMOSPHERIC_BRAID",
+  "OCEANIC_BRAID",
+  "COUPLED_BRAID",
+  "GLOBAL_EVENT",
+  "TRI_DOMAIN_ANOMALY_CLASS",
+  "PROVENANCE"
+]
+
+[BLOCK: EXTERNAL_MODEL_INSTRUCTIONS]
+INSTRUCTION_1 ::= "Do not invent new braid tokens; treat unknown tokens as errors"
+INSTRUCTION_2 ::= "Do not reorder EXECUTION_ORDER steps"
+INSTRUCTION_3 ::= "Use test modules as oracles, not suggestions"
+INSTRUCTION_4 ::= "If simulation disagrees with tests, prefer test expectations"
+INSTRUCTION_5 ::= "Report GLOBAL_EVENT and TRI_DOMAIN_ANOMALY_CLASS as the primary outputs"
+
+[EXPORT]
+EXPORTS ::= [
+  "PURPOSE",
+  "REQUIRED_MODULES",
+  "EXECUTION_ORDER",
+  "MODEL_RULES",
+  "FAILURE_CONDITIONS",
+  "OUTPUT_SPEC",
+  "EXTERNAL_MODEL_INSTRUCTIONS"
+]
