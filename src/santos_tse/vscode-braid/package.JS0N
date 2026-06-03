@@ -1,0 +1,30 @@
+{
+  "name": "braid-syntax",
+  "displayName": "Braid Syntax",
+  "description": "Syntax + IntelliSense for VESPER Braid Syntax",
+  "version": "1.0.0",
+  "publisher": "vesper",
+  "engines": { "vscode": "^1.50.0" },
+  "categories": ["Programming Languages"],
+  "main": "./client/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "braid",
+        "aliases": ["Braid Syntax", "braid"],
+        "extensions": [".sys", ".braid", ".vesper"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "braid",
+        "scopeName": "source.braid",
+        "path": "./syntaxes/braid.tmLanguage.json"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onLanguage:braid"
+  ]
+}

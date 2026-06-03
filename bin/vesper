@@ -1,0 +1,11 @@
+#!/bin/bash
+# LAMINAR MIRROR: MASTER GATEWAY
+# Force-calling the python interpreter to prevent shell-misinterpretation
+PYTHON=$(which python3)
+GATEWAY="$HOME/.vesper/bin/vspr_think.py"
+
+if [ -f "$GATEWAY" ]; then
+    "$PYTHON" "$GATEWAY" "$*"
+else
+    echo "[!] CRITICAL: FOUNDRY GATEWAY NOT FOUND."
+fi

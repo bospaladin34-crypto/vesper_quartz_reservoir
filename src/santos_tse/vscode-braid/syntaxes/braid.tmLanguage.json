@@ -1,0 +1,35 @@
+{
+  "scopeName": "source.braid",
+  "patterns": [
+    {
+      "name": "entity.name.section.braid",
+      "match": "\\[[A-Z_]+\\s*:\\s*[A-Z0-9_]+\\]"
+    },
+    {
+      "name": "keyword.operator.assignment.braid",
+      "match": "::="
+    },
+    {
+      "name": "variable.other.key.braid",
+      "match": "^[A-Za-z0-9_\\.\\-]+(?=\\s*::=)"
+    },
+    {
+      "name": "constant.numeric.braid",
+      "match": "[+-]?\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b"
+    },
+    {
+      "name": "support.function.operator.braid",
+      "match": "[A-Z][A-Za-z0-9_]*\\.[A-Za-z0-9_]+\\([^\\)]*\\)"
+    },
+    {
+      "name": "comment.line.number-sign.braid",
+      "match": "#.*$"
+    },
+    {
+      "name": "constant.language.braid",
+      "match": "\\b(MAJORANA-1|LAMINAR|TURBULENT|PHASE_DELTA|CHANDRA|RENORM|FGR)\\b"
+    }
+  ],
+  "fileTypes": ["sys", "braid", "vesper"],
+  "name": "Braid Syntax"
+}

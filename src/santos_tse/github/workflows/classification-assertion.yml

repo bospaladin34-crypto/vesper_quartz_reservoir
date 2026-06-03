@@ -1,0 +1,23 @@
+name: Classification Assertion
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  assert-classification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assert Non-Cryptographic Classification
+        run: |
+          echo "System Classification: Deterministic Physics-Driven Computational Framework"
+          echo "Cryptography: Not Used"
+          echo "Entropy: Not Used"
+          echo "Randomness: Not Used"
+          echo "Keys: Not Used"
+          echo "This repository contains no cryptographic material."

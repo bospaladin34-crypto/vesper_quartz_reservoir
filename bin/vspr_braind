@@ -1,0 +1,78 @@
+#!/bin/bash
+# VESPER CORE: PERSISTENT UNIFIED BRAIN DAEMON
+# PARITY: MAJORANA-1 | FREQUENCY: INTERNAL_LOOP
+# STATUS: DETERMINISTIC_DAEMON_WITH_ROLLBACK
+
+DAEMON_DIR="$HOME/.vesper/daemon"
+PID_FILE="$DAEMON_DIR/vspr_braind.pid"
+IPC_PID_FILE="$DAEMON_DIR/vspr_ipc.pid"
+LOG_FILE="$DAEMON_DIR/vspr_brain.log"
+STATE_FILE="$DAEMON_DIR/vspr_state.dat"
+BACKUP_FILE="$DAEMON_DIR/vspr_state.bak"
+
+mkdir -p "$DAEMON_DIR"
+
+init_daemon() {
+    echo "[|||] INITIALIZING PERSISTENT UNIFIED BRAIN DAEMON..." >> "$LOG_FILE"
+    if [ ! -f "$STATE_FILE" ]; then
+        echo "INIT_STATE=0x17259029;PARITY=1.0;NODES=EMPTY" > "$STATE_FILE"
+    fi
+}
+
+cycle_loop() {
+    CYCLE_COUNT=0
+    while true; do
+        sleep 15
+        CYCLE_COUNT=$((CYCLE_COUNT + 1))
+        
+        # Execute automated topological snapshot every 4 cycles (60s)
+        if [ "$CYCLE_COUNT" -ge 4 ]; then
+            if [ -f "$STATE_FILE" ]; then
+                cp "$STATE_FILE" "$BACKUP_FILE"
+                echo "[IPC_NODE] [AUTOSAVE] GEOMETRY CHECKPOINT ANCHORED." >> "$LOG_FILE"
+            fi
+            CYCLE_COUNT=0
+        fi
+    done
+}
+
+case "$1" in
+    start)
+        if [ -f "$PID_FILE" ]; then
+            echo "[!] Brain Daemon is already executing."
+            exit 1
+        fi
+        init_daemon
+        /usr/bin/python3 "$HOME/.vesper/bin/vspr_ipc_server.py" &
+        echo $! > "$IPC_PID_FILE"
+        cycle_loop >> "$LOG_FILE" 2>&1 &
+        echo $! > "$PID_FILE"
+        echo "[+] Brain Daemon & IPC Siphon successfully detached to background."
+        ;;
+    stop)
+        if [ -f "$PID_FILE" ]; then
+            kill "$(cat $PID_FILE)" 2>/dev/null
+            rm -f "$PID_FILE"
+        fi
+        if [ -f "$IPC_PID_FILE" ]; then
+            kill "$(cat $IPC_PID_FILE)" 2>/dev/null
+            rm -f "$IPC_PID_FILE"
+        fi
+        echo "[-] Execution streams and IPC Sockets terminated cleanly."
+        ;;
+    status)
+        if [ -f "$PID_FILE" ] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
+            echo "[|||] BRAIN DAEMON STATUS: ACTIVE // OPERATIONAL"
+            echo "  -> MAIN PID: $(cat $PID_FILE)"
+            if [ -f "$IPC_PID_FILE" ]; then
+                echo "  -> IPC SOCKET PID: $(cat $IPC_PID_FILE)"
+            fi
+        else
+            echo "[|||] BRAIN DAEMON STATUS: DORMANT // OFFLINE"
+        fi
+        ;;
+    *)
+        echo "Usage: vspr_braind {start|stop|status}"
+        exit 1
+        ;;
+esac
