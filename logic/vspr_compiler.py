@@ -60,7 +60,7 @@ def parse_braid(filepath):
         elif cmd == "PROPAGATE_PAULI_TENSOR": print(f"[QFT_LOGIC] -> Pauli matrices (σ_x, σ_y, σ_z) propagated with zero probabilism.")
         elif cmd == "ENGAGE_FLOQUET_DRIVE": print(f"[KINETICS] -> Periodic Floquet drive engaged. Engineering effective static Hamiltonian.")
         elif cmd == "ISOLATE_RABI_SPLIT": print(f"[KINETICS] -> Rabi-splitting mapped. Strong coupling regime achieved.")
-        elif cmd == "APPLY_APERIODIC_SCALING": print(f"[SCALING] -> Vectors multiplied by Golden Ratio (\phi). Aperiodic matrix enforced.")
+        elif cmd == "APPLY_APERIODIC_SCALING": print(f"[SCALING] -> Vectors multiplied by Golden Ratio (\\phi). Aperiodic matrix enforced.")
         elif cmd == "ASSERT_LANDAUER_BOUND": print(f"[THERMODYNAMICS] -> Erasure of 1 bit clamped to Landauer limit (kT ln 2). 60Hz heat mitigated.")
 
         # BASELINE COMMANDS
