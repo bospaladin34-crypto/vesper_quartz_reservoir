@@ -16,9 +16,10 @@ android {
         versionName = "1.0.0"
     }
 
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDirs("src/main/jniLibs")
+    // FORCING THE PACKAGE MANAGER TO RETAIN THE SO
+    packaging {
+        jniLibs {
+            keepDebugSymbols.add("**/libbraidc.so")
         }
     }
 
@@ -28,18 +29,13 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-    
-    // RECTIFIED: ELEVATED TO JDK 17 FOR PARITY
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    
-    // RECTIFIED: LOCKED KOTLIN TO JDK 17
     kotlinOptions {
         jvmTarget = "17"
     }
-    
     buildFeatures {
         compose = true
     }
